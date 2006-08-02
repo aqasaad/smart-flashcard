@@ -15,8 +15,13 @@ class particleFilter:
         for i in range(len(self.particleArray)):
             self.particleArray[i] = random.random()
 
+    def getPotentialOutcome(self, outCome, gauss):
+        particles = self.__reSample__(self.__getLikelihoods__(outCome), gauss, outCome)
+        return self.__bestEstimateHelper__(particles)
+
     def factorOutcome(self, outCome, gauss):
-        self.__reSample__(self.__getLikelihoods__(outCome), gauss, outCome)
+        particles = self.__reSample__(self.__getLikelihoods__(outCome), gauss, outCome)
+        self.__updateParticleArray__(particles)
 
     def __getLikelihoods__(self, outCome):
         toReturn = []
@@ -29,6 +34,9 @@ class particleFilter:
             else:
                 toReturn.append(p)
         return toReturn
+
+    def __updateParticleArray__(self, particles):
+        self.particleArray = particles
 
     def __reSample__(self, likelihoods, gauss, outCome):
         toReturn = []
@@ -53,26 +61,26 @@ class particleFilter:
             newPart = min(.9999, max(.0001, newPart))
             toReturn.append(newPart)
             j += 1
-        self.particleArray = toReturn
+        #self.particleArray = toReturn
+        return toReturn
 
+    def getBestEstimate(self):
+        return self.__bestEstimateHelper__(self.particleArray)
 
     #This really should be done better!
     #I could choose the best particle.
     #Or I could bin and choose the heaviest bin!
-    def getBestEstimate(self):
-        #p = sum(self.particleArray) / self.numParticles
-        #toReturn = min(.9999, max(.0001, p))
+    def __bestEstimateHelper__(self, particles):
         hist = [0]*20
-        for p in self.particleArray:
+        for p in particles:
             hist[min(19,int(p*20))] += 1
-        print hist
+        #print hist
         maxI = 0
         for i in range(20):
             if(hist[i]==max(hist)):
                 maxI = i
-                #return i * .05
         aSum, aCount = 0,0
-        for p in self.particleArray:
+        for p in particles:
             if(min(19,int(p*20)) == maxI):
                 aSum += p
                 aCount += 1
@@ -81,6 +89,5 @@ class particleFilter:
             print hist
         return aSum / aCount
 
-        #return toReturn
 
 
