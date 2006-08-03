@@ -7,7 +7,8 @@ import gaussProcess
 class particleFilter:
 
 
-    def __init__(self, n):
+    def __init__(self, word, n):
+        self.word = word
         #Number of particles in this particleFilter
         self.numParticles = n
         #Array to store particle locations
@@ -15,12 +16,12 @@ class particleFilter:
         for i in range(len(self.particleArray)):
             self.particleArray[i] = random.random()
 
-    def getPotentialOutcome(self, outCome, gauss):
-        particles = self.__reSample__(self.__getLikelihoods__(outCome), gauss, outCome)
+    def getPotentialOutcome(self, outCome, gauss, count):
+        particles = self.__reSample__(self.__getLikelihoods__(outCome), gauss, outCome, count)
         return self.__bestEstimateHelper__(particles)
 
-    def factorOutcome(self, outCome, gauss):
-        particles = self.__reSample__(self.__getLikelihoods__(outCome), gauss, outCome)
+    def factorOutcome(self, outCome, gauss, count):
+        particles = self.__reSample__(self.__getLikelihoods__(outCome), gauss, outCome, count)
         self.__updateParticleArray__(particles)
 
     def __getLikelihoods__(self, outCome):
@@ -38,7 +39,7 @@ class particleFilter:
     def __updateParticleArray__(self, particles):
         self.particleArray = particles
 
-    def __reSample__(self, likelihoods, gauss, outCome):
+    def __reSample__(self, likelihoods, gauss, outCome, count):
         toReturn = []
         s = sum(likelihoods)
         delta = s / (self.numParticles+1)
@@ -53,7 +54,7 @@ class particleFilter:
                 i += 1
             newPart = self.particleArray[i-1] + random.gauss(0,.08)
             newPart = min(.9999, max(.0001, newPart))
-            change = gauss.getResultantProb(self.particleArray[i-1], outCome)
+            change = gauss.getResultantProb(self.particleArray[i-1], outCome, self.word, count)
             if(abs(change) < .3):
                 newPart += change
             else:

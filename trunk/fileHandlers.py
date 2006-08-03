@@ -24,7 +24,8 @@ def loadHistory(words):
                 maxCount = max(first, maxCount)
                 toReturn[word].append((first, second))
             except:
-                print 'item: '+str(item)
+                continue
+                #print 'item: '+str(item)
     return (toReturn, maxCount)
 
 
