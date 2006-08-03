@@ -12,29 +12,55 @@ class gaussProcess:
         self.dataPoints = [[], []]
         self.prevData = {}
 
-    def addDataPoint(self, word, p, r):
+
+    def addDataPoint(self, word, p, r, count):
         p = min(.9999, max(.0001, p))
         if(word in self.prevData):
-            oldP, oldR = self.prevData[word]
-            self.dataPoints[oldR].append((oldP, r))
-        self.prevData[word] = (p, r)
+            oldP, oldR, oldCount = self.prevData[word]
+            self.dataPoints[oldR].append((oldP, r, count-oldCount))
+            #self.dataPoints[2].append((oldP, r, count-oldCount))
+        self.prevData[word] = (p, r, count)
         #self.dataPoints.append((p,r))
 
 
-    def getResultantProb(self, pProb, outCome):
-        sumWeights = 0.0
-        sumResults = 0.0
+    def getResultantProb(self, pProb, outCome, word, count):
+        sumWeights, sumResults = 0.0, 0.0
         data = self.dataPoints[outCome]
         for item in data:
-            nProb, result = item
+            nProb, result, deltaCount = item
             diff = nProb - pProb
             sigma = diff / .1
             w = math.e ** (-sigma*sigma)
             sumResults += w * result
             sumWeights += w
         return (sumResults / sumWeights) - pProb
-            
 
+
+    def getBlankProb(self, pProb, outCome, word, count):
+        sumResults2, sumWeights2 = 0.0, 0.0
+        for item in self.dataPoints[outCome]:
+            try:
+                nProb, result, deltaCount = item
+                diff = nProb - pProb
+                diffCount = abs(deltaCount) - abs(self.prevData[word][2] - count)
+                sigma = diff / .1
+                sigmaCount = diffCount / 10
+                w1 = math.e ** (-sigma*sigma)
+                w2 = math.e ** (-sigmaCount*sigmaCount)
+                sumResults2 += w1*w2*result
+                sumWeights2 += w1*w2
+            except:
+                continue
+        try:
+            print 'calculated prob with blanks:'+str((sumResults2 / sumWeights2))
+        except:
+            print 'sumResults2:'+str(sumResults2)
+            print 'sumWeights2:'+str(sumWeights2)
+
+
+    # I think that this is only called from a commented
+    # portion of code in flashcard.py
+    # So it really isn't too important.
     def binDataPoints(self, nBins):
         pos = []
         neg = []
