@@ -30,12 +30,13 @@ class particleFilter:
         # if outCome = 0, then want 1 - p
         # if outCome = 1, then want p
         #
-        for p in self.particleArray:
-            if(outCome == 0):
-                toReturn.append(1-p)
-            else:
-                toReturn.append(p)
-        return toReturn
+        return [(1-outCome)+(2*outCome-1)*p for p in self.particleArray]
+        #for p in self.particleArray:
+        #    if(outCome == 0):
+        #        toReturn.append(1-p)
+        #    else:
+        #        toReturn.append(p)
+        #return toReturn
 
     def __updateParticleArray__(self, particles):
         self.particleArray = particles
@@ -73,22 +74,27 @@ class particleFilter:
 
     def __bestEstimateHelper__(self, particles):
         hist = [0]*20
+        sums = [0.0]*20
         for p in particles:
-            hist[min(19,int(p*20))] += 1
-        #print hist
-        maxI = 0
+            i = min(19, int(p*20))
+            hist[i] += 1
+            sums[i] += p
+        maxCount = max(hist)
         for i in range(20):
-            if(hist[i]==max(hist)):
-                maxI = i
-        aSum, aCount = 0,0
-        for p in particles:
-            if(min(19,int(p*20)) == maxI):
-                aSum += p
-                aCount += 1
-        if(aCount==0):
-            print maxI
-            print hist
-        return aSum / aCount
+            if(hist[i]==maxCount):
+                return sums[i] / hist[i]
+        #for i in range(20):
+        #    if(hist[i]==max(hist)):
+        #        maxI = i
+        #aSum, aCount = 0,0
+        #for p in particles:
+        #    if(min(19,int(p*20)) == maxI):
+        #        aSum += p
+        #        aCount += 1
+        #if(aCount==0):
+        #    print maxI
+        #    print hist
+        #return aSum / aCount
 
 
 
