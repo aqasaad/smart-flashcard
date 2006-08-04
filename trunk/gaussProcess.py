@@ -48,10 +48,13 @@ class gaussProcess:
                 diffCount = abs(deltaCount) - abs(self.prevData[word][2] - count)
                 sigma = diff / .05
                 sigmaCount = diffCount / 6
-                w1 = math.e ** (-sigma*sigma)
-                w2 = math.e ** (-sigmaCount*sigmaCount)
-                sumResults2 += w1*w2*result
-                sumWeights2 += w1*w2
+                w = math.e ** (-(sigma*sigma + sigmaCount*sigmaCount))
+                sumResults2 += w * result
+                sumWeights2 += w
+                #w1 = math.e ** (-sigma*sigma)
+                #w2 = math.e ** (-sigmaCount*sigmaCount)
+                #sumResults2 += w1*w2*result
+                #sumWeights2 += w1*w2
             except:
                 continue
         if(sumWeights2==0):
