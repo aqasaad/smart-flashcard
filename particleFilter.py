@@ -8,6 +8,7 @@ class particleFilter:
 
 
     def __init__(self, word, n):
+        self.PARTICLE_VAR = .01
         self.word = word
         #Number of particles in this particleFilter
         self.numParticles = n
@@ -52,25 +53,24 @@ class particleFilter:
             while(accumSum < pointerSum):
                 accumSum += likelihoods[i]
                 i += 1
-            newPart = self.particleArray[i-1] + random.gauss(0,.08)
-            newPart = min(.9999, max(.0001, newPart))
-            change = gauss.getResultantProb(self.particleArray[i-1], outCome, self.word, count)
+            newPart = self.particleArray[i-1] + random.gauss(0,self.PARTICLE_VAR)
+            newPart = min(.999999, max(.000001, newPart))
+            p = self.particleArray[i-1]
+            change = gauss.getResultantProb(p, outCome, self.word, count) - p
             if(abs(change) < .3):
                 newPart += change
             else:
                 newPart += .3 * change / abs(change)
-            newPart = min(.9999, max(.0001, newPart))
+            newPart = min(.999999, max(.000001, newPart))
             toReturn.append(newPart)
             j += 1
-        #self.particleArray = toReturn
         return toReturn
 
     def getBestEstimate(self):
         return self.__bestEstimateHelper__(self.particleArray)
 
-    #This really should be done better!
-    #I could choose the best particle.
-    #Or I could bin and choose the heaviest bin!
+
+
     def __bestEstimateHelper__(self, particles):
         hist = [0]*20
         for p in particles:

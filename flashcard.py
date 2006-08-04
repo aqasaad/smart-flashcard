@@ -6,6 +6,9 @@ import time
 import particleFilter
 import gaussProcess
 import fileHandlers
+
+
+
 PRINT_PROB = True
 
 
@@ -26,6 +29,37 @@ def askWord(Uword, defn, prevProb):
         time.sleep(1)
     return outCome
 
+def chooseWord(items, particleFilters, gauss, count):
+    maxVal, maxItem = -99999, ''
+    for item in items:
+        word = item[0]
+        prob = particleFilters[word].getBestEstimate()
+        posChange = particleFilters[word].getPotentialOutcome(1, gauss, count)
+        negChange = particleFilters[word].getPotentialOutcome(0, gauss, count)
+        v1 = prob * valueOfProb(posChange) + (1-prob) * valueOfProb(negChange)
+        v2 = valueOfProb(prob)
+        delta = v1-v2
+        if(delta > maxVal):
+            print 'delta:'+str(delta)
+            print 'maxVal:'+str(maxVal)
+            print 'word:'+str(word)
+            maxVal = delta
+            maxItem = item
+    return maxItem
+
+        
+        
+        
+
+def valueOfProb(p):
+    if(p<.4):
+        return -5
+    elif(p < .6):
+        return -1
+    elif(p < .75):
+        return 1
+    else:
+        return 3
 
 
 #loop until the user types 'quit'
@@ -37,15 +71,13 @@ def loop(items):
     history, count = fileHandlers.loadHistory(words)
     oldCount = count
     particleFilters, gauss = initLearning(history)
-    #pos, neg = gauss.binDataPoints(10)
-    #print 'pos:'+str(pos)
-    #print 'neg:'+str(neg)
     while(user != 'quit'):
         count += 1
-        if(sum(result[-curRange:])*2 > curRange):
-            curRange = curRange + 5
-        index = min(len(items)-1, int(random.random()*curRange))
-        item = items[index]
+        #if(sum(result[-curRange:])*2 > curRange):
+        #    curRange = curRange + 5
+        #index = min(len(items)-1, int(random.random()*curRange))
+        #item = items[len(items)-index-1]
+        item = chooseWord(items, particleFilters, gauss, count)
         word, Uword, defn = item
         prevProb = particleFilters[word].getBestEstimate()
         posChange = particleFilters[word].getPotentialOutcome(1, gauss, count)
@@ -56,10 +88,9 @@ def loop(items):
         if(outCome == -1):
             break
         history[word].append((count,outCome))
-        gauss.getBlankProb(prevProb, outCome, word, count)
+        print 'blankProb:'+str(gauss.getBlankProb(prevProb, outCome, word, count))
         gauss.addDataPoint(word, prevProb, outCome, count)
         particleFilters[word].factorOutcome(outCome, gauss, count)
-        #print 'thingy:'+str(gauss.getResultantProb(prevProb, outCome, count))
         result.append(outCome)
         if(PRINT_PROB):
             print particleFilters[word].getBestEstimate()
@@ -72,12 +103,13 @@ def loop(items):
     fileHandlers.saveHistory(history)
 
 
+
 def initLearning(history):
     print 'init learning'
     toReturn = {}
     gauss = gaussProcess.gaussProcess()
     for word in history:
-        p = particleFilter.particleFilter(word, 1000)
+        p = particleFilter.particleFilter(word, 500)
         items = history[word]
         for item in items:
             try:
@@ -92,7 +124,6 @@ def initLearning(history):
                 continue
         toReturn[word] = p
     return (toReturn, gauss)
-
 
 
 
