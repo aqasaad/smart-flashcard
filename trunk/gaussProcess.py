@@ -14,7 +14,7 @@ class gaussProcess:
 
 
     def addDataPoint(self, word, p, r, count):
-        p = min(.9999, max(.0001, p))
+        p = min(.999999, max(.000001, p))
         if(word in self.prevData):
             oldP, oldR, oldCount = self.prevData[word]
             self.dataPoints[oldR].append((oldP, r, count-oldCount))
@@ -33,7 +33,10 @@ class gaussProcess:
             w = math.e ** (-sigma*sigma)
             sumResults += w * result
             sumWeights += w
-        return (sumResults / sumWeights) - pProb
+        if(sumWeights==0):
+            return pProb
+        else:
+            return (sumResults / sumWeights)
 
 
     def getBlankProb(self, pProb, outCome, word, count):
@@ -43,19 +46,19 @@ class gaussProcess:
                 nProb, result, deltaCount = item
                 diff = nProb - pProb
                 diffCount = abs(deltaCount) - abs(self.prevData[word][2] - count)
-                sigma = diff / .1
-                sigmaCount = diffCount / 10
+                sigma = diff / .05
+                sigmaCount = diffCount / 6
                 w1 = math.e ** (-sigma*sigma)
                 w2 = math.e ** (-sigmaCount*sigmaCount)
                 sumResults2 += w1*w2*result
                 sumWeights2 += w1*w2
             except:
                 continue
-        try:
-            print 'calculated prob with blanks:'+str((sumResults2 / sumWeights2))
-        except:
-            print 'sumResults2:'+str(sumResults2)
-            print 'sumWeights2:'+str(sumWeights2)
+        if(sumWeights2==0):
+            return pProb
+        else:
+            return (sumResults2 / sumWeights2)
+
 
 
     # I think that this is only called from a commented
