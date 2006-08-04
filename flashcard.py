@@ -12,13 +12,17 @@ class flashcard:
 
 
     def __init__(self):
+        #should the user be informed of probabilities?
         self.PRINT_PROB = True
+        #A mapping of words to particle filters
         self.particleFilters = {}
+        #A learned for all words
         self.gauss = None
+        #A hash of all words and their definitions
         self.flashItems = None
 
 
-
+    # Ask the user a word and print the definition if incorrect
     def askWord(self, Uword, defn, prevProb):
         print Uword
         if(self.PRINT_PROB):
@@ -35,6 +39,7 @@ class flashcard:
         return outCome
 
 
+    # Choose which word to ask the user next
     # This should be done with a heap, save some state from previous runs. Update the
     # top so many words each time, not all!
     def chooseWord(self, count):
@@ -56,7 +61,9 @@ class flashcard:
         return maxItem
 
 
-
+    # Define a value for the probability distribution.
+    # It currently only scores for one probability, but should
+    # take the entire distribution into account.
     def valueOfProb(self, p):
         if(p<.4):
             return -5
@@ -68,7 +75,7 @@ class flashcard:
             return 3
 
 
-
+    # Main loop of the program, ask words, update distributions, save results.
     #loop until the user types 'quit'
     def loop(self):
         user, words, result = '', {}, []
@@ -96,16 +103,17 @@ class flashcard:
         fileHandlers.saveHistory(history)
 
 
-
+    # Calculate prior probability, possibly display some info to user.
     def doPreInfo(self, word, count):
         prevProb = self.particleFilters[word].getBestEstimate()
-        posChange = self.particleFilters[word].getPotentialOutcome(1, self.gauss, count)
-        negChange = self.particleFilters[word].getPotentialOutcome(0, self.gauss, count)
-        print 'potential pos change: ' + str(posChange)
-        print 'potential neg change: ' + str(negChange)
+        if(self.PRINT_PROB):
+            posChange = self.particleFilters[word].getPotentialOutcome(1, self.gauss, count)
+            negChange = self.particleFilters[word].getPotentialOutcome(0, self.gauss, count)
+            print 'potential pos change: ' + str(posChange)
+            print 'potential neg change: ' + str(negChange)
         return prevProb
 
-
+    # Add data to learner, update particle filter.
     def doPostInfo(self, prevProb, outCome, word, count):
         print 'blankProb:'+str(self.gauss.getBlankProb(prevProb, outCome, word, count))
         self.gauss.addDataPoint(word, prevProb, outCome, count)
@@ -115,7 +123,7 @@ class flashcard:
         print '****'
 
 
-
+    # Create the learning data structures, incorporate previous results to distributions.
     def initLearning(self, history):
         print 'init learning'
         toReturn = {}
@@ -152,7 +160,7 @@ class flashcard:
         return 0
 
 
-
+    # Return True if individual words match
     def getWordMatch(self, a,b):
         if((a=='') | (b=='')):
             return False
@@ -161,7 +169,7 @@ class flashcard:
         return (na == nb)
 
 
-
+    # Run the flashcard program
     def runQuestions(self):
         if(len(sys.argv)<2):
             print 'please specify an input file!'
@@ -177,13 +185,6 @@ class flashcard:
 def main():
     flash = flashcard()
     flash.runQuestions()
-
-
-
-
-
-    
-    
 
 
 

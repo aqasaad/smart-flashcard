@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 
+# Load the .history file and return a data structure.
 def loadHistory(words):
     toReturn, maxCount = {}, 0
     for word in words:
@@ -29,7 +30,7 @@ def loadHistory(words):
     return (toReturn, maxCount)
 
 
-
+# Save the new history to the .history file.
 def saveHistory(history):
     print 'Saving history . . .'
     f = open('.history', 'w')
@@ -40,7 +41,8 @@ def saveHistory(history):
     f.close()
 
 
-#parse the input file data into words and definitions
+#Parse the input file data into words and definitions.
+#Skips all lines that aren't the expected format.
 def parseData(lines):
     toReturn = []
     for line in lines:
@@ -54,7 +56,8 @@ def parseData(lines):
     return toReturn
 
 
-#convert the input data to unicode
+#Convert the input data to unicode.
+#This allows for ascii encodings of accented characters.
 #e/, e\, e^, a^ are currently matched
 def convString(string):
     toReturn = []
@@ -75,7 +78,8 @@ def convString(string):
     return unicode(''.join(toReturn))
 
 
-#open .flashcard and see if a similar file name has been entered before
+#Open .flashcard and see if a similar file name has been entered before.
+#This allows for abbreviated file names that aren't relative paths.
 def resolveFileName(name):
     possible = []
     try:
