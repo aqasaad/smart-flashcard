@@ -99,6 +99,9 @@ class particleFilter:
             if(hist[i]==maxCount):
                 return sums[i] / hist[i]
 
-
-
-
+    def  printHist(self):
+        hist = [0]*20
+        for p in self.particleArray:
+            i = min(19, int(p*20))
+            hist[i] += 1
+        print hist
