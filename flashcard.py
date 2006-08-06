@@ -20,10 +20,15 @@ class flashcard:
         self.gauss = None
         #A hash of all words and their definitions
         self.flashItems = None
+        #Save the previous word asked.
+        self.prevWord = ""
+        self.improveList = []
+
 
 
     # Ask the user a word and print the definition if incorrect
-    def askWord(self, Uword, defn, prevProb):
+    def askWord(self, word, Uword, defn, prevProb):
+        self.prevWord = word
         print Uword
         if(self.PRINT_PROB):
             print prevProb
@@ -39,27 +44,69 @@ class flashcard:
         return outCome
 
 
+    def chooseWord(self, count):
+        return self.chooseImproveWord(count)
+        #return self.chooseImprovementWord(count)
+        #return self.chooseRandomWord()
+
+    def chooseRandomWord(self):
+        i = random.random()*len(self.flashItems)
+        return self.flashItems[i]
+
+
+    def chooseImproveWord(self, count):
+        for i in range(10)[1:]:
+            val, item = self.improveList[-i]
+            v = self.__getExpectedImprovement__(item[0], count)
+            self.improveList[-i] = (v, item)
+        self.improveList.sort()
+        val, item = self.improveList[-1]
+        print self.improveList[-5:]
+        return item
+
+
     # Choose which word to ask the user next
     # This should be done with a heap, save some state from previous runs. Update the
     # top so many words each time, not all!
-    def chooseWord(self, count):
+    def chooseImprovementWord(self, count):
         maxVal, maxItem = -99999, ''
         for item in self.flashItems:
             word = item[0]
-            prob = self.particleFilters[word].getBestEstimate()
-            posChange = self.particleFilters[word].getPotentialOutcome(1, self.gauss, count)
-            negChange = self.particleFilters[word].getPotentialOutcome(0, self.gauss, count)
-            v1 = prob * self.valueOfProb(posChange) + (1-prob) * self.valueOfProb(negChange)
-            v2 = self.valueOfProb(prob)
-            delta = v1-v2
-            if(delta > maxVal):
-                print 'delta:'+str(delta)
-                print 'maxVal:'+str(maxVal)
+            #prob = self.particleFilters[word].getBestEstimate()
+            #posChange = self.particleFilters[word].getPotentialOutcome(1, self.gauss, count)
+            #negChange = self.particleFilters[word].getPotentialOutcome(0, self.gauss, count)
+            #v1 = prob * self.valueOfProb(posChange) + (1-prob) * self.valueOfProb(negChange)
+            v = self.__getExpectedImprovement__(word, count)
+            #v2 = self.valueOfProb(prob)
+            #delta = v1-v2
+            if((v > maxVal) & (self.prevWord != word)):
+                print 'delta:'+str(v)
+                #print 'maxVal:'+str(maxVal)
                 print 'word:'+str(word)
-                maxVal = delta
+                maxVal = v
                 maxItem = item
         return maxItem
 
+    def __initImproveList__(self, count):
+        haveDone = {}
+        print 'Initing the improvement data structure . . .'
+        for item in self.flashItems:
+            word = item[0]
+            if(word in haveDone):
+                continue
+            else:
+                haveDone[word] = None
+            v = self.__getExpectedImprovement__(word, count)
+            self.improveList.append((v, item))
+        self.improveList.sort()
+
+    def __getExpectedImprovement__(self, word, count):
+        prob = self.particleFilters[word].getBestEstimate()
+        posChange = self.particleFilters[word].getPotentialOutcome(1, self.gauss, count)
+        negChange = self.particleFilters[word].getPotentialOutcome(0, self.gauss, count)
+        v1 = prob * self.valueOfProb(posChange) + (1-prob) * self.valueOfProb(negChange)
+        v2 = self.valueOfProb(prob)
+        return v1-v2
 
     # Define a value for the probability distribution.
     # It currently only scores for one probability, but should
@@ -89,7 +136,7 @@ class flashcard:
             item = self.chooseWord(count)
             word, Uword, defn = item
             prevProb = self.doPreInfo(word, count)
-            outCome = self.askWord(Uword, defn, prevProb) 
+            outCome = self.askWord(word, Uword, defn, prevProb) 
             if(outCome == -1):
                 break
             history[word].append((count,outCome))
@@ -115,7 +162,7 @@ class flashcard:
 
     # Add data to learner, update particle filter.
     def doPostInfo(self, prevProb, outCome, word, count):
-        print 'blankProb:'+str(self.gauss.getBlankProb(prevProb, outCome, word, count))
+        #print 'blankProb:'+str(self.gauss.getBlankProb(prevProb, outCome, word, count))
         self.gauss.addDataPoint(word, prevProb, outCome, count)
         self.particleFilters[word].factorOutcome(outCome, self.gauss, count)
         if(self.PRINT_PROB):
@@ -126,7 +173,7 @@ class flashcard:
     # Create the learning data structures, incorporate previous results to distributions.
     def initLearning(self, history):
         print 'init learning'
-        toReturn = {}
+        toReturn, count = {}, 0
         self.gauss = gaussProcess.gaussProcess()
         for word in history:
             p = particleFilter.particleFilter(word, 500)
@@ -144,7 +191,7 @@ class flashcard:
                     continue
             toReturn[word] = p
         self.particleFilters = toReturn
-
+        self.__initImproveList__(count+1)
 
 
 
