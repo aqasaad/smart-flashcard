@@ -13,7 +13,7 @@ class flashcard:
 
     def __init__(self):
         #should the user be informed of probabilities?
-        self.PRINT_PROB = True
+        self.PRINT_PROB = False
         #A mapping of words to particle filters
         self.particleFilters = {}
         #A learned for all words
@@ -22,8 +22,9 @@ class flashcard:
         self.flashItems = None
         #Save the previous word asked.
         self.prevWord = ""
+        self.prevItem = None
         self.improveList = []
-
+        self.ident = ''
 
 
     # Ask the user a word and print the definition if incorrect
@@ -56,12 +57,16 @@ class flashcard:
 
     def chooseImproveWord(self, count):
         for i in range(10)[1:]:
+            if(i>len(self.improveList)):
+                continue
             val, item = self.improveList[-i]
             v = self.__getExpectedImprovement__(item[0], count)
             self.improveList[-i] = (v, item)
         self.improveList.sort()
         val, item = self.improveList[-1]
-        print self.improveList[-5:]
+        if(item == self.prevItem):
+            val, item = self.improveList[-2]
+        self.prevItem = item
         return item
 
 
@@ -128,7 +133,7 @@ class flashcard:
         user, words, result = '', {}, []
         for word in self.flashItems:
             words[word[0]] = None
-        history, count = fileHandlers.loadHistory(words)
+        history, count = fileHandlers.loadHistory(self.ident, words)
         oldCount = count
         self.initLearning(history)
         while(user != 'quit'):
@@ -144,15 +149,16 @@ class flashcard:
             self.doPostInfo(prevProb, outCome, word, count)
             # This shouldn't fuxor my histroy, right?
             if(count-oldCount > 10):
-                fileHandlers.saveHistory(history)
-                history, count = fileHandlers.loadHistory(words)
+                fileHandlers.saveHistory(self.ident, history)
+                history, count = fileHandlers.loadHistory(self.ident, words)
                 oldCount = count
-        fileHandlers.saveHistory(history)
+        fileHandlers.saveHistory(self.ident, history)
 
 
     # Calculate prior probability, possibly display some info to user.
     def doPreInfo(self, word, count):
         prevProb = self.particleFilters[word].getBestEstimate()
+        self.particleFilters[word].printHist()
         if(self.PRINT_PROB):
             posChange = self.particleFilters[word].getPotentialOutcome(1, self.gauss, count)
             negChange = self.particleFilters[word].getPotentialOutcome(0, self.gauss, count)
@@ -167,6 +173,7 @@ class flashcard:
         self.gauss.addDataPoint(word, prevProb, outCome, count)
         if(self.PRINT_PROB):
             print self.particleFilters[word].getBestEstimate()
+        self.particleFilters[word].printHist()
         print '****'
 
 
@@ -221,9 +228,11 @@ class flashcard:
         if(len(sys.argv)<2):
             print 'please specify an input file!'
         fileName = sys.argv[1]
-        name = fileHandlers.resolveFileName(fileName)
-        data = open(name).read().split('\n')
-        self.flashItems = fileHandlers.parseData(data)
+        #name = fileHandlers.resolveFileName(fileName)
+        #data = open(name).read().split('\n')
+        #self.flashItems = fileHandlers.parseData(data)
+        self.ident, self.flashItems = fileHandlers.getFlashItems(fileName)
+        
         self.loop()
 
 

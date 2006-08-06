@@ -1,20 +1,3 @@
 
-file:./../../../text/french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
-file:french.txt
+file:french.txt:2
+file:newWords.txt:3
