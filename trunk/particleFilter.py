@@ -65,7 +65,8 @@ class particleFilter:
             newPart = self.particleArray[i-1] + random.gauss(0,self.PARTICLE_VAR)
             newPart = min(.999999, max(.000001, newPart))
             p = self.particleArray[i-1]
-            change = gauss.getResultantProb(p, outCome, self.word, count) - p
+            #change = gauss.getResultantProb(p, outCome, self.word, count) - p
+            change = gauss.getBlankProb(p, outCome, self.word, count) - p
             if(abs(change) < .3):
                 newPart += change
             else:

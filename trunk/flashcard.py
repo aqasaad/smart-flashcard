@@ -121,7 +121,7 @@ class flashcard:
         else:
             return 3
 
-
+        #Do I even need the result list? Is it not just using the history hash?
     # Main loop of the program, ask words, update distributions, save results.
     #loop until the user types 'quit'
     def loop(self):
@@ -163,8 +163,8 @@ class flashcard:
     # Add data to learner, update particle filter.
     def doPostInfo(self, prevProb, outCome, word, count):
         #print 'blankProb:'+str(self.gauss.getBlankProb(prevProb, outCome, word, count))
-        self.gauss.addDataPoint(word, prevProb, outCome, count)
         self.particleFilters[word].factorOutcome(outCome, self.gauss, count)
+        self.gauss.addDataPoint(word, prevProb, outCome, count)
         if(self.PRINT_PROB):
             print self.particleFilters[word].getBestEstimate()
         print '****'
