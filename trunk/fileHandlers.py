@@ -30,6 +30,8 @@ def loadHistory(words):
     return (toReturn, maxCount)
 
 
+#Is this finishing? Why don't i have anything for 'dispose'?
+#Do I need to be flushing? I am closing the stream.
 # Save the new history to the .history file.
 def saveHistory(history):
     print 'Saving history . . .'
