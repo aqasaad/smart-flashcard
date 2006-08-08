@@ -23,8 +23,34 @@ class gaussProcess:
         # This structure exists so that 'dataPoints' structure can
         # be correctly maintained.
         self.prevData = {}
+        self.loadedHistory = False
 
 
+    def saveHistory(self):
+        file = open('gauss.history','w')
+        for item in self.dataPoints[0]:
+            a,b,c = item
+            file.write('0'+' '+str(a)+' '+str(b)+' '+str(c)+'\n')
+        for item in self.dataPoints[1]:
+            a,b,c = item
+            file.write('1'+' '+str(a)+' '+str(b)+' '+str(c)+'\n')
+        file.close()
+
+    def loadHistory(self):
+        if(self.loadedHistory):
+            return
+        self.loadedHistory = True
+        try:
+            data = open('gauss.history').read().split('\n')
+            for line in data:
+                if(len(line)<3):
+                    continue
+                first, prob, result, blank = line.split(' ')
+                self.dataPoints[int(first)].append((float(prob), int(result), int(blank)))
+        except:
+            print 'Failed to read in history'
+
+                       
     # Add a data point to the collection. This allows a relation to be
     # built between esitamated probability, previously learning, and current
     # answering of definitions.

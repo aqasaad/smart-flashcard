@@ -2,7 +2,8 @@
 
 
 # Load the .history file and return a data structure.
-def loadHistory(ident, words):
+def loadHistory(ident, words, gauss):
+    gauss.loadHistory()
     toReturn, maxCount = {}, 0
     for word in words:
         toReturn[word] = []
@@ -35,8 +36,9 @@ def loadHistory(ident, words):
 #Is this finishing? Why don't i have anything for 'dispose'?
 #Do I need to be flushing? I am closing the stream.
 # Save the new history to the .history file.
-def saveHistory(ident, history):
+def saveHistory(ident, history, gauss):
     print 'Saving history . . .'
+    gauss.saveHistory()
     f = open(str(ident) + '.history', 'w')
     for word in history:
         toWrite = ' '.join([str(a) for a in history[word]])
