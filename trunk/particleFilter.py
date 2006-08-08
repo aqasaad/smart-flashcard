@@ -9,7 +9,7 @@ class particleFilter:
 
     def __init__(self, word, n):
         #Variance when adding nose to selected particles in resampling.
-        self.PARTICLE_VAR = .01
+        self.PARTICLE_VAR = .1
         #The word for this particle filter.
         self.word = word
         #Number of particles in this particleFilter
@@ -27,6 +27,30 @@ class particleFilter:
         return self.__bestEstimateHelper__(particles)
 
 
+    def evalPotentialDistrib(self, outCome, gauss, count):
+        particles = self.__reSample__(self.__getLikelihoods__(outCome), gauss, outCome, count)
+        return self.__evalDistrib__(particles)
+
+    
+    def evalCurrentDistrib(self):
+        return self.__evalDistrib__(self.particleArray)
+
+
+    def __evalDistrib__(self, particles):
+        toReturn, count = 0, 0
+        for p in particles:
+            count +=1
+            if(p<.4):
+                toReturn -= 5
+            elif(p < .6):
+                toReturn -= 1
+            elif(p < .75):
+                toReturn += 1
+            else:
+                toReturn += 3
+        return float(toReturn) / count
+
+
     #Factor the 'outCome' event into the probability distribution and save the results.
     def factorOutcome(self, outCome, gauss, count):
         particles = self.__reSample__(self.__getLikelihoods__(outCome), gauss, outCome, count)
@@ -37,7 +61,11 @@ class particleFilter:
     def __getLikelihoods__(self, outCome):
         # if outCome = 0, then want 1 - p
         # if outCome = 1, then want p
-        return [(1-outCome)+(2*outCome-1)*p for p in self.particleArray]
+        return [(1-outCome)+.5*(2*outCome-1)*p for p in self.particleArray]
+        # so likelihoods range from 0 to 1. I only want them to be half as extreme.
+        # to outCome = 0, p = 1, want .5
+        #    outCome = 0, p = .5 want .25? That is a linear scale and gives same end.
+
 
 
     # Save 'particles' as the particleArray for this particleFilter
@@ -62,15 +90,16 @@ class particleFilter:
             while(accumSum < pointerSum):
                 accumSum += likelihoods[i]
                 i += 1
-            newPart = self.particleArray[i-1] + random.gauss(0,self.PARTICLE_VAR)
-            newPart = min(.999999, max(.000001, newPart))
             p = self.particleArray[i-1]
+            newPart = p + random.gauss(0,self.PARTICLE_VAR)
+            #newPart = min(.999999, max(.000001, newPart))
             #change = gauss.getResultantProb(p, outCome, self.word, count) - p
             change = gauss.getBlankProb(p, outCome, self.word, count) - p
-            if(abs(change) < .3):
-                newPart += change
-            else:
-                newPart += .3 * change / abs(change)
+            #Should blankProb be adding noise?
+            #if(abs(change) < .3):
+            newPart += change
+            #else:
+            #    newPart += .3 * change / abs(change)
             newPart = min(.999999, max(.000001, newPart))
             toReturn.append(newPart)
             j += 1
@@ -99,7 +128,7 @@ class particleFilter:
             if(hist[i]==maxCount):
                 return sums[i] / hist[i]
 
-    def  printHist(self):
+    def printHist(self):
         hist = [0]*20
         for p in self.particleArray:
             i = min(19, int(p*20))
