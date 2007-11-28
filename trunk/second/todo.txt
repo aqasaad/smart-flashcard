@@ -1,0 +1,10 @@
+
+
+* add comments explaining basic ideas of each method
+* add some basic function definitions
+
+
+
+
+
+----------------
