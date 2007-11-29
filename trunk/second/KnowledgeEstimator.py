@@ -12,3 +12,15 @@
 class KnowledgeEstimator:
   def __init__(self):
     pass
+
+  def CardKnowledgeScore(self, flashcard):
+    pass
+
+  def CardSetKnowledgeScore(self, flashcardSet):
+    pass
+
+
+
+
+
+

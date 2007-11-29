@@ -1,14 +1,21 @@
 
 
 
-
-
-* add basic skeleton methods
-* add fields for classes
+* define spec for reading questions from text files
+* write some questions to test with
+* basic run of code to ask random questions and maintain results
+* save session histories to disk on closing
+* load session histories from disk on opening
+* Basic evaluation of knowledge scores
+* methods to predict knowledge scores after asking a question
+* pick a question that will optimize knowlede increases
+* improve improve improve
 
 
 ----------------
 
 
+* add basic skeleton methods
+* add fields for classes
 * add comments explaining basic ideas of each method
 * add some basic function definitions
