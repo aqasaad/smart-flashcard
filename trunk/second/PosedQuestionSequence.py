@@ -5,6 +5,8 @@
 # A sequence of question posings - either for a single
 # Flashcard or for a FlashcardSet.
 #
+# TODO: Any more methods needed for scoring that I
+# should put in this class?
 
 import time
 
@@ -26,6 +28,8 @@ class PosedQuestionSequence:
     self.AddItem(question, timeDiff, answer)
 
   def GetCorrectFrequency(self):
+    # TODO: Implement this.
     pass
+
 
 

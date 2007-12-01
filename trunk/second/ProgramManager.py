@@ -21,8 +21,12 @@ class ProgramManager:
     self.learner.SetCards(flashcards)
 
   def Start(self):
-    pass
     # TODO: What would we do here?
+    print 'Starting the flashcard session!'
+    while(True):
+      self.AskQuestion()
+    self.Stop()
+
 
   def AskQuestion(self):
     self.learner.AskAQuestion()
@@ -31,6 +35,6 @@ class ProgramManager:
     self.learner.UpdateForAnswer(answer)
 
   def Stop(self):
-  self.sessionManager.SaveSession(self.flashcards, '')
+    self.sessionManager.SaveSession(self.flashcards, '')
     # TODO: save the session history
 
