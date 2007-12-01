@@ -6,28 +6,31 @@
 # as a single learning item.
 
 
+import random
+
 class FlashCardSet:
   def __init__(self, flashcards):
     self.flashcards = flashcards
     self.history = PosedQuestionSequence()
+    self.lastQuestion = None
 
   def SetHistory(self, questionSequence):
     self.histpry = questionSequence()
 
   def AskQuestion(self, question):
+    self.lastQuestionAsked = question
     question.PrintQuestion()
 
-  def UpdateForAnswer(self, question, answer):
-    self.history.UpdateForAnswer(question, answer)
+  def UpdateForAnswer(self, answer):
+    self.history.UpdateForAnswer(self.lastQuestion, answer)
     question.history.UpdateForAnswer(question, answer)
 
   def ChooseRandomQuestion(self):
-    pass
-    # TODO: Implement this.
+    num = random.randint(0, len(self.flashcards)-1)
+    return self.flashcards[num]
 
   def ChooseLastAskedQuestion(self):
-    pass
-    # TODO: Implement this.
+    return self.lastQuestion
 
   def ChooseEasiestQuestion(self):
     pass

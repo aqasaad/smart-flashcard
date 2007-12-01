@@ -9,6 +9,10 @@
 # specify a type, and if not default to the method
 # specified here - allowing future xml and html more easily.
 
+
+from FlashCardItem import FlashCardItem
+
+
 class FlashCardParser:
   def __init__(self):
     pass
@@ -21,8 +25,9 @@ class FlashCardParser:
         continue
       try:
         question, answer = line.split('<@>')
-        flashcards.append(question, answer)	
-      except ParseError:
+	newCard = self.CreateFlashCard(question, answer)
+        flashcards.append(newCard)
+      except ValueError:
         print 'Could not parse line:', line
     return flashcards
 

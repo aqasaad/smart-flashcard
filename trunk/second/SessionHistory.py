@@ -5,8 +5,6 @@
 # Managers the sessions that have previously been gone
 # through so as to estimate the current state of knowledge.
 #
-# TODO (jhebert): Wrap these methods in try and except
-# blocks and return appropriate empty values in failure.
 
 
 import pickle
@@ -18,14 +16,22 @@ class SessionHistory:
   def SaveSession(self, flashcards, fileName):
     questionSequence = flashcards.history
     binaryString = pickle.dumps(questionSequence)
-    # TODO: wrap in try, return success. 
-    f = open(fileName, 'w')
-    f.write(binaryString)
-    f.close()
+    success = False
+    try:
+      f = open(fileName, 'w')
+      f.write(binaryString)
+      f.close()
+      success = True
+    except IOError:
+      print 'Error opening file to write:', fileName
+    return success
 
   def LoadSession(self, fileName):
-    # TODO: wrap in try, return success. 
-    binaryString = open(fileName).read()
-    questionSequence = pickle.loads(binaryString)
+    questionSequence = None
+    try:
+      binaryString = open(fileName).read()
+      questionSequence = pickle.loads(binaryString)
+    except IOError:
+      print 'Error opening session history file:', fileName
     return questionSequence
 
