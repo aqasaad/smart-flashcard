@@ -7,11 +7,21 @@
 
 class Learner:
   def __init__(self):
-    self.FlashCardSets = []
+    self.flashCardSet = Noone
     self.knowledgeEstimator = None
+    self.lastQuestion = None
+
+  def SetCards(self, flashCardSet):
+    self.flashCardSet = flashCardSet
 
   def AskAQuestion(self):
-    pass
+    toAsk = self.PickAQuestion()
+    self.lastQuestion = toAsk
+    toAsk.PrintQuestion()
 
   def PickAQuestion(self):
-    pass
+    question = self.flashCardSet.ChooseRandomQuestion()
+
+  def UpdateForAnswer(self, answer):
+    self.flasCardSet.UpdateForAnswer(question, answer)
+
