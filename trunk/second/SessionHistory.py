@@ -15,12 +15,17 @@ class SessionHistory:
   def __init__(self):
     pass
 
-  def SaveSession(self, questionSequence, fileName):
+  def SaveSession(self, flashcards, fileName):
+    questionSequence = flashcards.history
     binaryString = pickle.dumps(questionSequence)
+    # TODO: wrap in try, return success. 
     f = open(fileName, 'w')
     f.write(binaryString)
+    f.close()
 
   def LoadSession(self, fileName):
+    # TODO: wrap in try, return success. 
     binaryString = open(fileName).read()
     questionSequence = pickle.loads(binaryString)
     return questionSequence
+

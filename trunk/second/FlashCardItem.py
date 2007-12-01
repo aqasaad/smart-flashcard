@@ -21,7 +21,9 @@ class FlashCardItem:
     print self.questionText
 
   def IsCorrectAnswer(self, answer):
-    return False
+    # TODO: somehow check if the answer given is
+    # close to the answer saved.
+    return (answer == self.answerText)
 
 
 

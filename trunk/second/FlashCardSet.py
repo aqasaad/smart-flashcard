@@ -7,9 +7,12 @@
 
 
 class FlashCardSet:
-  def __init__(self):
-    self.flashcards = []
-    self.history = None
+  def __init__(self, flashcards):
+    self.flashcards = flashcards
+    self.history = PosedQuestionSequence()
+
+  def SetHistory(self, questionSequence):
+    self.histpry = questionSequence()
 
   def AskQuestion(self, question):
     question.PrintQuestion()
@@ -20,13 +23,17 @@ class FlashCardSet:
 
   def ChooseRandomQuestion(self):
     pass
+    # TODO: Implement this.
 
   def ChooseLastAskedQuestion(self):
     pass
+    # TODO: Implement this.
 
   def ChooseEasiestQuestion(self):
     pass
+    # TODO: Implement this.
 
   def ChooseHardestQuestion(self):
     pass
+    # TODO: Implement this.
 

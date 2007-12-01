@@ -1,6 +1,7 @@
 
 
 
+* implement question choosing from FlashCardSet
 
 * create a more general simulation class to control display
 * add functions to get answers from user in main control class
