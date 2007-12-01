@@ -14,9 +14,13 @@ class KnowledgeEstimator:
     pass
 
   def CardKnowledgeScore(self, flashcard):
+    # TODO: implement a crude score for a card's
+    # history sequence.
     pass
 
   def CardSetKnowledgeScore(self, flashcardSet):
+    # TODO: Implement scoring for a set of cards
+    # and their sequences.
     pass
 
 
