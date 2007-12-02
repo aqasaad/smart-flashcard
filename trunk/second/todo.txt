@@ -1,8 +1,6 @@
 
 
-
-* pick easy question
-* pick hard question
+* hellza commenting!
 * Basic evaluation of knowledge scores
 * methods to predict knowledge scores after asking a question
 * pick a question that will optimize knowlede increases
@@ -13,6 +11,8 @@
 ----------------
 
 
+* pick easy question
+* pick hard question
 * add functions to get answers from user in main control class
 * basic run of code to ask random questions and maintain results
 * save session histories to disk on closing
