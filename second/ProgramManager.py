@@ -49,7 +49,7 @@ class ProgramManager:
     
   def Stop(self):
     print 'Ending the flashcard session...'
-    self.sessionManager.SaveSession(self.learner.flashCardSet, 'session.history')
+    self.sessionManager.SaveSession(self.learner.allFlashCards, 'session.history')
 
 
 def main():

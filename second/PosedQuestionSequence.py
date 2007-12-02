@@ -30,4 +30,25 @@ class PosedQuestionSequence:
     timeDiff = currTime - oldTime
     self.AddItem(question, timeDiff, answer)
 
+  def CorrectFrequency(self):
+    correctCount, totalCount = 0, 0
+    for posedQuestion in self.questionSequence:
+      totalCount += 1
+      if (posedQuestion.correct):
+        correctCount += 1
+    if (totalCount == 0):
+      return 0
+    return float(correctCount) / totalCount
+
+  def CorrectQuestionFreq(self, questionHash):
+    correctCount, totalCount = 0, 0
+    for posedQuestion in self.questionSequence:
+      if (posedQuestion.questionHash != questionHash):
+        continue
+      totalCount += 1
+      if (posedQuestion.correct):
+        correctCount += 1
+    if (totalCount == 0):
+      return 0
+    return float(correctCount) / totalCount
 

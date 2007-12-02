@@ -8,23 +8,28 @@
 
 class Learner:
   def __init__(self):
-    self.flashCardSet = None
+    self.allFlashCards = None
+    self.workingSet = None
     self.knowledgeEstimator = None
 
   def SetCards(self, flashCardSet):
-    self.flashCardSet = flashCardSet
+    self.allFlashCards = flashCardSet
+    self.ChooseWorkingSet()
+
+  def ChooseWorkingSet(self):
+    self.workingSet = self.allFlashCards
 
   def AskAQuestion(self):
     toAsk = self.PickAQuestion()
     print '*****'
-    self.flashCardSet.AskQuestion(toAsk)
+    self.workingSet.AskQuestion(toAsk)
 
   def PickAQuestion(self):
-    #question = self.flashCardSet.ChooseRandomQuestion()
-    #question = self.flashCardSet.ChooseHardestQuestion()
-    question = self.flashCardSet.ChooseEasiestQuestion()
+    question = self.workingSet.ChooseRandomQuestion()
+    #question = self.workingSet.ChooseHardestQuestion()
+    #question = self.workingSet.ChooseEasiestQuestion()
     return question
 
   def UpdateForAnswer(self, answer):
-    self.flashCardSet.UpdateForAnswer(answer)
+    self.workingSet.UpdateForAnswer(answer)
 
