@@ -31,6 +31,5 @@ class FlashCardItem:
     isCorrect = (answer == self.answerText)
     return isCorrect
 
-
   def Hash(self):
     return hash(self.questionText + self.answerText)

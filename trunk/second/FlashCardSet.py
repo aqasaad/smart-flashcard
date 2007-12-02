@@ -20,8 +20,10 @@ class FlashCardSet:
 
   def AskQuestion(self, question):
     self.lastQuestion = question
-    freq = self.CorrectQuestionFreq(question.Hash())
+    freq = self.history.CorrectQuestionFreq(question.Hash())
+    globalFreq = self.history.CorrectFrequency()
     print 'Correct freq:', freq
+    print 'Set correct freq:', globalFreq
     question.PrintQuestion()
 
   def UpdateForAnswer(self, answer):
@@ -44,7 +46,7 @@ class FlashCardSet:
   def ChooseEasiestQuestion(self):
     maxFreq, bestQuestion = -1, self.ChooseRandomQuestion()
     for question in self.flashcards:
-      currFreq = self.CorrectQuestionFreq(question.Hash())
+      currFreq = self.history.CorrectQuestionFreq(question.Hash())
       if (currFreq > maxFreq):
         maxFreq, bestQuestion = currFreq, question
     return bestQuestion
@@ -52,29 +54,13 @@ class FlashCardSet:
   def ChooseHardestQuestion(self):
     lowestFreq, bestQuestion = 1, self.ChooseRandomQuestion()
     for question in self.flashcards:
-      currFreq = self.CorrectQuestionFreq(question.Hash())
+      currFreq = self.history.CorrectQuestionFreq(question.Hash())
       if (currFreq < lowestFreq):
         lowestFreq, bestQuestion = currFreq, question
     return bestQuestion
 
-  def CorrectFrequency(self):
-    correctCount, totalCount = 0, 0
-    for posedQuestion in self.history.questionSequence:
-      totalCount += 1
-      if (posedQuestion.correct):
-        correctCount += 1
-    if (totalCount == 0):
-      return 0
-    return float(correctCount) / totalCount
+  def ChooseRandomHardQuestion(self):
+    pass
+    # TODO: Wait towards a hard card but still choose
+    # randomly from the set.
 
-  def CorrectQuestionFreq(self, questionHash):
-    correctCount, totalCount = 0, 0
-    for posedQuestion in self.history.questionSequence:
-      if (posedQuestion.questionHash != questionHash):
-        continue
-      totalCount += 1
-      if (posedQuestion.correct):
-        correctCount += 1
-    if (totalCount == 0):
-      return 0
-    return float(correctCount) / totalCount
