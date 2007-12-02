@@ -20,7 +20,9 @@ class Learner:
     self.flashCardSet.AskQuestion(toAsk)
 
   def PickAQuestion(self):
-    question = self.flashCardSet.ChooseRandomQuestion()
+    #question = self.flashCardSet.ChooseRandomQuestion()
+    #question = self.flashCardSet.ChooseHardestQuestion()
+    question = self.flashCardSet.ChooseEasiestQuestion()
     return question
 
   def UpdateForAnswer(self, answer):
