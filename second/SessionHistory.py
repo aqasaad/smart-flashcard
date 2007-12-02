@@ -15,6 +15,7 @@ class SessionHistory:
 
   def SaveSession(self, flashcards, fileName):
     questionSequence = flashcards.history
+    print 'Saving:', questionSequence
     binaryString = pickle.dumps(questionSequence)
     success = False
     try:
@@ -31,6 +32,7 @@ class SessionHistory:
     try:
       binaryString = open(fileName).read()
       questionSequence = pickle.loads(binaryString)
+      print 'Loading:', questionSequence
     except IOError:
       print 'Error opening session history file:', fileName
     return questionSequence

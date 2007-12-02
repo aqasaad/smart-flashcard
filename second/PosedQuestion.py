@@ -8,10 +8,7 @@
 
 class PosedQuestion:
   def __init__(self):
-    self.question = None
+    self.questionHash = None
     self.elapsedTime = None
     self.correct = False
     self.answer = None
-
-
-

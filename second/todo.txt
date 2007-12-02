@@ -1,23 +1,24 @@
 
 
 
-* implement question choosing from FlashCardSet
-
-* create a more general simulation class to control display
-* add functions to get answers from user in main control class
-* basic run of code to ask random questions and maintain results
-* save session histories to disk on closing
-* load session histories from disk on opening
+* pick easy question
+* pick hard question
 * Basic evaluation of knowledge scores
 * methods to predict knowledge scores after asking a question
 * pick a question that will optimize knowlede increases
+* control flashcardset size relative to knowledge score
 * improve improve improve
 
 
 ----------------
 
 
-
+* add functions to get answers from user in main control class
+* basic run of code to ask random questions and maintain results
+* save session histories to disk on closing
+* load session histories from disk on opening
+* create a more general simulation class to control display
+* implement question choosing from FlashCardSet
 * write some questions to test with
 * define spec for reading questions from text files
 * add basic skeleton methods

@@ -9,6 +9,8 @@
 # should put in this class?
 
 import time
+from PosedQuestion import PosedQuestion
+
 
 class PosedQuestionSequence:
   def __init__(self):
@@ -16,20 +18,16 @@ class PosedQuestionSequence:
 
   def AddItem(self, question, time, answer):
     toAdd = PosedQuestion()
-    toAdd.question = question
+    toAdd.questionHash = question.Hash()
     toAdd.elapsedTime = time
     toAdd.correct = question.IsCorrectAnswer(answer)
     toAdd.answer = answer
+    self.questionSequence.append(toAdd)
 
   def UpdateForAnswer(self, question, answer):
     oldTime = question.lastAskTime
     currTime = time.time()
     timeDiff = currTime - oldTime
     self.AddItem(question, timeDiff, answer)
-
-  def GetCorrectFrequency(self):
-    # TODO: Implement this.
-    pass
-
 
 
