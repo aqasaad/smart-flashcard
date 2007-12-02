@@ -42,12 +42,20 @@ class FlashCardSet:
     return self.lastQuestion
 
   def ChooseEasiestQuestion(self):
-    pass
-    # TODO: Implement this.
+    highestFreq, bestQuestion = -1, self.ChooseRandomQuestion()
+    for question in self.flashcards:
+      currFreq = self.CorrectQuestionFreq(question.Hash())
+      if (currFreq > highestFreq):
+        highestFreq, bestQuestion = currFreq, question
+    return bestQuestion
 
   def ChooseHardestQuestion(self):
-    pass
-    # TODO: Implement this.
+    lowestFreq, bestQuestion = 1, self.ChooseRandomQuestion()
+    for question in self.flashcards:
+      currFreq = self.CorrectQuestionFreq(question.Hash())
+      if (currFreq < lowestFreq):
+        lowestFreq, bestQuestion = currFreq, question
+    return bestQuestion
 
   def CorrectFrequency(self):
     correctCount, totalCount = 0, 0
