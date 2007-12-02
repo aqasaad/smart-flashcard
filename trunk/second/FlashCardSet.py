@@ -7,6 +7,7 @@
 
 
 import random
+from PosedQuestionSequence import PosedQuestionSequence
 
 class FlashCardSet:
   def __init__(self, flashcards):
@@ -15,14 +16,22 @@ class FlashCardSet:
     self.lastQuestion = None
 
   def SetHistory(self, questionSequence):
-    self.histpry = questionSequence()
+    self.history = questionSequence
 
   def AskQuestion(self, question):
-    self.lastQuestionAsked = question
+    self.lastQuestion = question
+    freq = self.CorrectQuestionFreq(question.Hash())
+    print 'Correct freq:', freq
     question.PrintQuestion()
 
   def UpdateForAnswer(self, answer):
-    self.history.UpdateForAnswer(self.lastQuestion, answer)
+    question = self.lastQuestion
+    isCorrect = question.IsCorrectAnswer(answer)
+    if (isCorrect):
+      print '  Correct!'
+    else:
+      question.PrintAnswer()
+    self.history.UpdateForAnswer(question, answer)
     question.history.UpdateForAnswer(question, answer)
 
   def ChooseRandomQuestion(self):
@@ -40,3 +49,24 @@ class FlashCardSet:
     pass
     # TODO: Implement this.
 
+  def CorrectFrequency(self):
+    correctCount, totalCount = 0, 0
+    for posedQuestion in self.history.questionSequence:
+      totalCount += 1
+      if (posedQuestion.correct):
+        correctCount += 1
+    if (totalCount == 0):
+      return 0
+    return float(correctCount) / totalCount
+
+  def CorrectQuestionFreq(self, questionHash):
+    correctCount, totalCount = 0, 0
+    for posedQuestion in self.history.questionSequence:
+      if (posedQuestion.questionHash != questionHash):
+        continue
+      totalCount += 1
+      if (posedQuestion.correct):
+        correctCount += 1
+    if (totalCount == 0):
+      return 0
+    return float(correctCount) / totalCount

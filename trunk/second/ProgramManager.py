@@ -23,7 +23,8 @@ class ProgramManager:
   def Init(self):
     flashcards = self.cardParser.ParseFile('sample.dat')
     history = self.sessionManager.LoadSession('session.history')
-    flashcards.SetHistory(history)
+    if (history != None):
+      flashcards.SetHistory(history)
     self.learner.SetCards(flashcards)
 
   def Start(self):
@@ -37,15 +38,18 @@ class ProgramManager:
 
   def AskQuestion(self):
     self.learner.AskAQuestion()
-    answer = raw_input('Answer: ')
-    if (answer == 'exit'):
+    try:
+      answer = raw_input('Answer: ')
+      if (answer == 'exit'):
+        return True
+      self.learner.UpdateForAnswer(answer)
+      return False
+    except EOFError:
       return True
-    self.learner.UpdateForAnswer(answer)
-    return False
-
+    
   def Stop(self):
     print 'Ending the flashcard session...'
-    self.sessionManager.SaveSession(self.flashcards, 'session.history')
+    self.sessionManager.SaveSession(self.learner.flashCardSet, 'session.history')
 
 
 def main():

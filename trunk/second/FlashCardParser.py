@@ -11,7 +11,7 @@
 
 
 from FlashCardItem import FlashCardItem
-
+from FlashCardSet import FlashCardSet
 
 class FlashCardParser:
   def __init__(self):
@@ -29,11 +29,11 @@ class FlashCardParser:
         flashcards.append(newCard)
       except ValueError:
         print 'Could not parse line:', line
-    return flashcards
-
+    flashCardSet = FlashCardSet(flashcards)
+    return flashCardSet
 
   def CreateFlashCard(self, question, answer):
     flashcard = FlashCardItem()
-    flashcard.questionText = question
-    flashcard.answerText = answer
+    flashcard.questionText = question.strip()
+    flashcard.answerText = answer.strip()
     return flashcard
